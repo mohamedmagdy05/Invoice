@@ -22,12 +22,12 @@ namespace Z2data.Invoice.Core.Interfaces
         /// add new Items
         /// </summary>
         /// <param name="items">Object Param</param>
-        void AddItems(Items items);
+        Items AddItems(Items items);
         /// <summary>
         /// delete exist Items
         /// </summary>
         /// <param name="ID">int Param</param>
-        void DeleteItems(int ID);
+        Items DeleteItems(int ID);
         /// <summary>
         /// update exist Items
         /// </summary>

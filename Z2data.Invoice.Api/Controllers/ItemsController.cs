@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,27 +18,28 @@ namespace Z2data.Invoice.Api.Controllers
     public class ItemsController : ControllerBase
     {
         private IConfiguration _config;
-        ItemsInterface _db; 
-        
+        private ItemsInterface _db;
+
         public ItemsController(IConfiguration config)
         {
             _config = config;
-
             _db = new ItemsRepo(_config);
         }
 
         // GET: api/<ItemsController>
         [HttpGet]
-        public IEnumerable<Items> Get()
+        public IActionResult Get()
         {
             try
             {
-
-                return _db.GetItems();
+                throw new ArgumentNullException();
+                return Ok(_db.GetItems());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                Log.Error(ex.Message);
+
+                return BadRequest(ex);
             }
         }
 
@@ -52,6 +54,7 @@ namespace Z2data.Invoice.Api.Controllers
             }
             catch (Exception ex)
             {
+                Log.Error(ex.Message);
                 return BadRequest(ex);
             }
         }
@@ -62,11 +65,12 @@ namespace Z2data.Invoice.Api.Controllers
         {
             try
             {
-                _db.AddItems(items);
-                return Ok();
+
+                return Ok(_db.AddItems(items));
             }
             catch (Exception ex)
             {
+                Log.Error(ex.Message);
                 return BadRequest(ex);
             }
         }
@@ -82,6 +86,7 @@ namespace Z2data.Invoice.Api.Controllers
             }
             catch (Exception ex)
             {
+                Log.Error(ex.Message);
                 return BadRequest(ex);
             }
         }
@@ -92,11 +97,12 @@ namespace Z2data.Invoice.Api.Controllers
         {
             try
             {
-                _db.DeleteItems(id);
-                return Ok();
+
+                return Ok(_db.DeleteItems(id));
             }
             catch (Exception ex)
             {
+                Log.Error(ex.Message);
                 return BadRequest(ex);
             }
         }

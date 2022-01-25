@@ -10,17 +10,21 @@ using Z2data.Invoice.Core.Interfaces;
 
 namespace Z2data.Invoice.Core.Repository
 {
-    
+
     public class ItemsRepo : ItemsInterface
     {
         private IConfiguration _config;
-        
+
         public ItemsRepo(IConfiguration config)
         {
             _config = config;
         }
-
-        public void AddItems(Items items)
+        /// <summary>
+        /// add new item 
+        /// </summary>
+        /// <param name="items">Object Param</param>
+        /// <returns></returns>
+        public Items AddItems(Items items)
         {
             try
             {
@@ -35,16 +39,25 @@ namespace Z2data.Invoice.Core.Repository
                     cmd.Parameters.AddWithValue("@ItemsName", items.ItemName);
                     cmd.Parameters.AddWithValue("@ItemsDate", items.ItemDate);
                     cmd.Parameters.AddWithValue("@CategoryID", items.CategoryID);
-                    cmd.ExecuteNonQuery();
-                }       
-             }
+                    var res = cmd.ExecuteNonQuery();
+                    if (res > 0)
+                        return items;
+                    else
+                        return Item;
+
+                }
+            }
             catch (Exception)
             {
                 throw;
             }
         }
-
-        public void DeleteItems(int ID)
+        /// <summary>
+        /// delete item
+        /// </summary>
+        /// <param name="items">Object Param</param>
+        /// <returns></returns>
+        public Items DeleteItems(int ID)
         {
             try
             {
@@ -52,12 +65,21 @@ namespace Z2data.Invoice.Core.Repository
                 var CS = _config.GetConnectionString("DefaultConnection");
                 using (SqlConnection con = new SqlConnection(CS))
                 {
+                    var data = GetItemsById(ID);
+                    if (data != null)
+                    {
+                        SqlCommand cmd = new SqlCommand("DeleteItems", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        con.Open();
+                        cmd.Parameters.AddWithValue("@ItemsID", ID);
+                        var res = cmd.ExecuteNonQuery();
+                        if (res > 0)
+                            return data;
 
-                    SqlCommand cmd = new SqlCommand("DeleteItems", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    con.Open();
-                    cmd.Parameters.AddWithValue("@ItemsID", ID);
-                    cmd.ExecuteNonQuery();
+                    }
+
+                    return Item;
+
                 }
             }
             catch (Exception)
@@ -102,13 +124,13 @@ namespace Z2data.Invoice.Core.Repository
                 throw;
             }
         }
-            /// <summary>
-            /// Get Item By id 
-            /// </summary>
-            /// <param name="ID">int Param</param>
-            /// <returns></returns>
-            public Items GetItemsById(int ID)
-            {
+        /// <summary>
+        /// Get Item By id 
+        /// </summary>
+        /// <param name="ID">int Param</param>
+        /// <returns></returns>
+        public Items GetItemsById(int ID)
+        {
             try
             {
                 var Item = new Items();
@@ -133,7 +155,7 @@ namespace Z2data.Invoice.Core.Repository
                         };
                     }
                 }
-            return Item;
+                return Item;
             }
             catch (Exception)
             {
@@ -153,18 +175,21 @@ namespace Z2data.Invoice.Core.Repository
                 var CS = _config.GetConnectionString("DefaultConnection");
                 using (SqlConnection con = new SqlConnection(CS))
                 {
+                    var data = GetItemsById(items.ItemID);
+                    if (data != null)
+                    {
+                        SqlCommand cmd = new SqlCommand("UpdateItems", con);
+                        cmd.CommandType = CommandType.StoredProcedure;
+                        con.Open();
+                        cmd.Parameters.AddWithValue("@ItemsID", items.ItemID);
+                        cmd.Parameters.AddWithValue("@ItemsName", items.ItemName);
+                        cmd.Parameters.AddWithValue("@ItemsDate", items.ItemDate);
+                        cmd.Parameters.AddWithValue("@CategoryID", items.CategoryID);
+                        var res = cmd.ExecuteNonQuery();
+                        if (res > 0)
+                            return items;
+                    }
 
-                    SqlCommand cmd = new SqlCommand("UpdateItems", con);
-                    cmd.CommandType = CommandType.StoredProcedure;
-                    con.Open();
-                    cmd.Parameters.AddWithValue("@ItemsID", items.ItemID);
-                    cmd.Parameters.AddWithValue("@ItemsName", items.ItemName);
-                    cmd.Parameters.AddWithValue("@ItemsDate", items.ItemDate);
-                    cmd.Parameters.AddWithValue("@CategoryID", items.CategoryID);
-                    var res = cmd.ExecuteNonQuery();
-                    if (res > 0)
-                        return items;
-                    
                 }
                 return Item;
             }
@@ -174,4 +199,4 @@ namespace Z2data.Invoice.Core.Repository
             }
         }
     }
-    } 
+}
