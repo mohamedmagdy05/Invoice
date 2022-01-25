@@ -30,6 +30,7 @@ namespace Z2data.Invoice.Api
             services.AddControllers();
             services.AddSingleton<IConfiguration>(Configuration);
             services.AddTransient<ItemsInterface, ItemsRepo>();
+            services.AddSwaggerGen();
 
         }
 
@@ -39,8 +40,10 @@ namespace Z2data.Invoice.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                
             }
-
+            app.UseSwagger();
+            app.UseSwaggerUI();
             app.UseHttpsRedirection();
 
             app.UseRouting();
