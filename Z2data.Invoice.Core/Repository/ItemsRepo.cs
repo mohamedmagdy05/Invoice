@@ -10,6 +10,7 @@ using Z2data.Invoice.Core.Interfaces;
 
 namespace Z2data.Invoice.Core.Repository
 {
+    
     public class ItemsRepo : ItemsInterface
     {
         private IConfiguration _config;
